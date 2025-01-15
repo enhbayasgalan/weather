@@ -1,36 +1,56 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import countriesData from "./data";
+import { getAllCities } from "./utils/get-all-cities";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [searchValue, setSearchValue] = useState("");
+  const [allCities, setAllCities] = useState([]);
+  const [selectedCity, setSelectedCity] = useState("Ulaanbaatar, Mongolia");
+  const [filteredData, setFilteredData] = useState([]);
+  const [weatherData, setWeatherData] = useState({});
 
+  const getCountries = async () => {
+    try {
+      const response = await fetch(
+        "https://countriesnow.space/api/v0.1/countries"
+      );
+      const result = await response.json();
+      const countries = result.data;
+      const cities = getAllCities(countries);
+      console.log
+      setAllCities(cities);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onChange = (event) => {
+    setSearchValue(event.target.value);
+    const filtered = allCities
+    .filter((el) => el.startsWith(searchValue))
+    .slice(0, 5);
+
+    setFilteredData(filtered);
+  };
+
+  useEffect(() => {
+    getCountries();
+  }, []);
 
   return (
     <>
-      <div className="flex w-full  h-[1200px] w-[2200px] flex">
-        <div className=" bg-slate-50  w-1/2 flex justify-center items-center flex-col">
-          <div className="relative" >
-            <svg className="lucide lucide-search absolute left-6 top-29 -translate-y-30 text-gray-500"
-              width="32"
-              height="32"
-              viewBox="0 0 48 48"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <g opacity="0.2">
-                <path
-                  d="M31.51 28.51H29.93L29.37 27.97C31.33 25.69 32.51 22.73 32.51 19.51C32.51 12.33 26.69 6.51001 19.51 6.51001C12.33 6.51001 6.51001 12.33 6.51001 19.51C6.51001 26.69 12.33 32.51 19.51 32.51C22.73 32.51 25.69 31.33 27.97 29.37L28.51 29.93V31.51L38.51 41.49L41.49 38.51L31.51 28.51ZM19.51 28.51C14.53 28.51 10.51 24.49 10.51 19.51C10.51 14.53 14.53 10.51 19.51 10.51C24.49 10.51 28.51 14.53 28.51 19.51C28.51 24.49 24.49 28.51 19.51 28.51Z"
-                  fill="black"
-                />
-              </g>
-            </svg>
-
-            <input
-              placeholder="search"
-              className=" py-4 pl-10 pr-2 text-[25px]"
-            />
+      <div className=" w-full  h-[1200px] w-[2200px] justify-center items-center flex">
+      <div className="flex absolute mt-[-50vw] justify-center text-white z-30">
+          <input className="bg-black"/>
+            <div className="">
+            {filteredData.map((el) => (
+            <p key={el}>{el}</p>
+            ))}
           </div>
-          <div className=" w-[400px] h-[800px] min-w-120 top-16 left-40 bg-white/75 px-[30px] py-[40px] z-20 rounded-xl shadow-lg gap-[30px] flex flex-col ">
+        </div> 
+        <div className=" bg-slate-50 h-full w-1/2 flex justify-center items-center flex-col relative">
+      
+          <div className=" w-[400px] h-[800px] min-w-120 top-16 left-40 bg-white/75 px-[30px] py-[40px] z-20 rounded-xl shadow-lg gap-[30px] flex flex-col justify-center ">  
             <div className="flex gap-[50px] items-center">
               <div>
                 <p className=" text-gray-500 font-medium ">
@@ -72,9 +92,8 @@ function App() {
               </div>
             </div>
           </div>
-        </div>
-
-        <div className="  w-1/2 bg-slate-900 flex justify-center items-center">
+          </div>
+          <div className=" h-full w-1/2 bg-slate-900  flex justify-center items-center">
           <div className=" w-[400px] h-[800px] min-w-120 top-16 left-40 bg-[#111827]/75 px-[30px] py-[40px] z-20 rounded-xl shadow-lg gap-[30px] flex flex-col backdrop-blur-md mb-[-10]">
             <div className="flex gap-[50px] items-center">
               <div>
@@ -116,6 +135,12 @@ function App() {
             </div>
           </div>
         </div>
+       
+        </div>
+       
+
+
+        
         <div className="rounded-full w-[140px] h-[140px]  top-1/2 left-1/2 m-100 absolute -translate-x-1/2 -translate-y-1/2 border border-gray-4 flex items-center justify-center bg-[white] gap-[20px]">
           <svg
             width="43"
@@ -147,7 +172,7 @@ function App() {
             {" "}
           </div>
         </div>
-      </div>
+       
     </>
   );
 }
