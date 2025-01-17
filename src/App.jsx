@@ -5,15 +5,16 @@ import { getAllCities } from "./utils/get-all-cities";
 function App() {
   const [searchValue, setSearchValue] = useState("");
   const [allCities, setAllCities] = useState([]);
-  const [selectedCity, setSelectedCity] = useState("Ulaanbaatar, Mongolia");
+  const [selectedCity, setSelectedCity] = useState("Ulaanbaatar, mongloia");
   const [filteredData, setFilteredData] = useState([]);
   const [weatherData, setWeatherData] = useState({});
   const [dayTemp, setDaytemp] = useState("");
-  const [nightTemp, setNightTemp] = useState("")
+  const [nightTemp, setNightTemp] = useState("");
+  const [daytext, setDaytext] = useState("");
+  const [isCon, setIcon] = useState("");
+  const [city, setcity] = useState("");
 
-
-  console.log(weatherData)
-
+  console.log(weatherData);
 
   const getCountries = async () => {
     try {
@@ -24,7 +25,7 @@ function App() {
 
       const result = await response.json();
       // console.log(result);
-      
+
       const countries = result.data;
       const cities = getAllCities(countries);
       console.log;
@@ -34,9 +35,9 @@ function App() {
     }
   };
 
-  const weatherApiKey = "f1312c3dbf794061b8b71014251601"
+  const weatherApiKey = "f1312c3dbf794061b8b71014251601";
 
-  const getWeatherData = async() => {
+  const getWeatherData = async () => {
     try {
       const response = await fetch(
         `https://api.weatherapi.com/v1/forecast.json?key=${weatherApiKey}&q=${selectedCity}`
@@ -45,20 +46,177 @@ function App() {
       setWeatherData(result);
       const daytemp = result.forecast.forecastday[0].hour[9].temp_c;
       const nighttemp = result.forecast.forecastday[0].hour[22].temp_c;
-      setDaytemp(daytemp)
-      setNightTemp(nighttemp)
+      const daytext = result.forecast.forecastday[0].day.condition.text;
+       
+      
+      if (daytext === "sunny") {
+        setIcon("sun.png"); //sun
+      } else if (
+        daytext === "Partly Cloudly" ||
+        daytext === "Cloudy" ||
+        daytext === "Overcast" ||
+        daytext === "Mist" ||
+        daytext === "Fog" ||
+        daytext === "Freezing fog"
+      ) {
+        setIcon("Clouds.png");
+      } else if (daytext === "Blowing snow" || daytext === "Blizzard") {
+        setIcon("Wind.png");
+      } else if (
+        daytext === "Patchy rain possible" ||
+        daytext === "Patchy freezing drizzle possible" ||
+        daytext === "Patchy light drizzle" ||
+        daytext === "Light drizzle" ||
+        daytext === "Freezing drizzle" ||
+        daytext === "Heavy freezing drizzle" ||
+        daytext === "Patchy light rain" ||
+        daytext === "Light rain" ||
+        daytext === "Moderate rain at times" ||
+        daytext === "Moderate rain" ||
+        daytext === "Heavy rain at times" ||
+        daytext === "Heavy rain" ||
+        daytext === "Light freezing rain" ||
+        daytext === "Moderate or heavy freezing rain" ||
+        daytext === "Light rain shower" ||
+        daytext === "Moderate or heavy rain shower" ||
+        daytext === "Patchy rain nearby" ||
+        daytext === "Torrential rain shower" 
+      ) {
+        setIcon("Rain.png");
+      } else if (
+        daytext === "Patchy snow possible" ||
+        daytext === "Patchy sleet possible" ||
+        daytext === "Light sleet" ||
+        daytext === "Moderate or heavy sleet" ||
+        daytext === "Patchy light snow" ||
+        daytext === "Light snow" ||
+        daytext === "Patchy moderate snow" ||
+        daytext === "Moderate snow" ||
+        daytext === "Patchy heavy snow" ||
+        daytext === "Heavy snow" ||
+        daytext === "Ice pellets" ||
+        daytext === "Light sleet showers" ||
+        daytext === "Moderate or heavy sleet showers" ||
+        daytext === "Light snow showers" ||
+        daytext === "Moderate or heavy snow showers" ||
+        daytext === "Light showers og ice pellets" ||
+        daytext === "Moderate or heavy showers of ice pellets" 
+      ) {
+        setIcon("snow.png");
+      } else if (
+        daytext === "Thundery outbreaks possible" ||
+        daytext === "Patchy light rain with thunder" ||
+        daytext === "Moderate or heavy rain with thunder" ||
+        daytext === "Patchy light snow with thunder" ||
+        daytext === "Moderate or heavy snow with thunder"
+      ) {
+        setIcon("Storm.png");
+      }
+
+      setDaytext(daytext);
+      setDaytemp(daytemp);
+      setNightTemp(nighttemp);
       console.log(result);
-      
-      
-      
     } catch (error) {
       console.log(error);
     }
   };
 
+  const getWeatherImage = () => {
+    const conditionText = weatherData?.forecast?.forecastday?.[0]?.day?.condition?.text || "";
+  
+    // Нарны зураг
+    if (conditionText.toLowerCase().includes("sunny")) {
+      return "sun.png";  // Нарны зураг
+    } 
+    // Үүлэн болон Бүрхүүлтэй туман
+    else if (
+      conditionText.toLowerCase().includes("cloud") ||
+      conditionText.toLowerCase().includes("overcast") ||
+      conditionText.toLowerCase().includes("fog")
+    ) {
+      return "Clouds.png";  // Үүлтэй, бүрхүүлтэй туман
+    } 
+    // Бороо
+    else if (conditionText.toLowerCase().includes("rain")) {
+      return "Rain.png";  // Бороо
+    } 
+    // Цас, Салхи
+    else if (
+      conditionText.toLowerCase().includes("snow") ||
+      conditionText.toLowerCase().includes("sleet") ||
+      conditionText.toLowerCase().includes("freezing")
+    ) {
+      return "snow.png";  // Цас
+    } 
+    // Тунадас
+    else if (
+      conditionText.toLowerCase().includes("Storm") ||
+      conditionText.toLowerCase().includes("Storm")
+    ) {
+      return "Storm.png";  // Тунадас
+    } 
+    // Салхи
+    else if (conditionText.toLowerCase().includes("wind")) {
+      return "Wind.png";  // Салхи
+    } 
+    // Хэрэв ямар ч тохиролцоогүй бол
+    else {
+      return "Default.png";  // Үндсэн зураг (есдүгээр зураг)
+    }
+  };
+   
+
+  const getWeatherNightImage = () => {
+    const NightconditionText = weatherData?.forecast?.forecastday?.[0]?.day?.condition?.text || "";
+  
+    // Нарны зураг
+    if (NightconditionText.toLowerCase().includes("sunny")) {
+      return "moon.png";  // Нарны зураг
+    } 
+    // Үүлэн болон Бүрхүүлтэй туман
+    else if (
+      NightconditionText.toLowerCase().includes("cloud") ||
+      NightconditionText.toLowerCase().includes("overcast") ||
+      NightconditionText.toLowerCase().includes("fog")
+    ) {
+      return "NightClouds.png";  // Үүлтэй, бүрхүүлтэй туман
+    } 
+    // Бороо
+    else if (NightconditionText.toLowerCase().includes("rain")) {
+      return "NightRain.png";  // Бороо
+    } 
+    // Цас, Салхи
+    else if (
+      NightconditionText.toLowerCase().includes("snow") ||
+      NightconditionText.toLowerCase().includes("sleet") ||
+      NightconditionText.toLowerCase().includes("freezing")
+    ) {
+      return "NightSnow.png";  // Цас
+    } 
+    // Тунадас
+    else if (
+      NightconditionText.toLowerCase().includes("Storm") ||
+      NightconditionText.toLowerCase().includes("Storm")
+    ) {
+      return "NightStorm.png";  // Тунадас
+    } 
+    // Салхи
+    else if (NightconditionText.toLowerCase().includes("wind")) {
+      return "NightWind.png";  // Салхи
+    } 
+    // Хэрэв ямар ч тохиролцоогүй бол
+    else {
+      return "Default.png";  // Үндсэн зураг (есдүгээр зураг)
+    }
+  };
+
+  
+   
+
   const handleClickCity = (city) => {
-    setSelectedCity(city)
-  }
+    setSelectedCity(city).slice(1);
+  };
 
   const onChange = (event) => {
     setSearchValue(event.target.value);
@@ -74,44 +232,49 @@ function App() {
     getWeatherData();
   }, [selectedCity]);
 
-  
-
   return (
     <>
       <div className=" w-full  h-[1200px] w-[2200px] justify-center items-center flex">
         <div className="flex absolute justify-center text-black z-30 flex-col top-[200px]">
           <div className="flex items-center">
-          <svg
-            className="absolute left-6 flex "
-            width="48"
-            height="48"
-            viewBox="0 0 48 48"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <g opacity="0.2">
-              <path
-                d="M31.51 28.51H29.93L29.37 27.97C31.33 25.69 32.51 22.73 32.51 19.51C32.51 12.33 26.69 6.51001 19.51 6.51001C12.33 6.51001 6.51001 12.33 6.51001 19.51C6.51001 26.69 12.33 32.51 19.51 32.51C22.73 32.51 25.69 31.33 27.97 29.37L28.51 29.93V31.51L38.51 41.49L41.49 38.51L31.51 28.51ZM19.51 28.51C14.53 28.51 10.51 24.49 10.51 19.51C10.51 14.53 14.53 10.51 19.51 10.51C24.49 10.51 28.51 14.53 28.51 19.51C28.51 24.49 24.49 28.51 19.51 28.51Z"
-                fill="black"
-              />
-            </g>
-          </svg>
+            <svg
+              className="absolute left-6 flex "
+              width="48"
+              height="48"
+              viewBox="0 0 48 48"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <g opacity="0.2">
+                <path
+                  d="M31.51 28.51H29.93L29.37 27.97C31.33 25.69 32.51 22.73 32.51 19.51C32.51 12.33 26.69 6.51001 19.51 6.51001C12.33 6.51001 6.51001 12.33 6.51001 19.51C6.51001 26.69 12.33 32.51 19.51 32.51C22.73 32.51 25.69 31.33 27.97 29.37L28.51 29.93V31.51L38.51 41.49L41.49 38.51L31.51 28.51ZM19.51 28.51C14.53 28.51 10.51 24.49 10.51 19.51C10.51 14.53 14.53 10.51 19.51 10.51C24.49 10.51 28.51 14.53 28.51 19.51C28.51 24.49 24.49 28.51 19.51 28.51Z"
+                  fill="black"
+                />
+              </g>
+            </svg>
 
-          <input
-            className="bg-gray-600 w-[512px] h-[80px] rounded-full py-4 pl-20 pr-6 text-[32px]"
-            placeholder="search"
-            value={searchValue}
-            onChange={onChange}
-          />
+            <input
+              className="bg-gray-600 w-[512px] h-[80px] rounded-full py-4 pl-20 pr-6 text-[32px]"
+              placeholder="search"
+              value={searchValue}
+              onChange={onChange}
+            />
           </div>
-          {searchValue.length !==0 ? (<div className="mt-2.5 rounded-3xl bg-white/80 text-[20px] gap-x-4 px-6 ">
-            {filteredData.map((el, index) => (
-              <p  onClick={() => handleClickCity(el)} key={index}>{el}</p>
-            ))}
-          </div>):null}
+          {searchValue.length !== 0 ? (
+            <div className="mt-2.5 rounded-3xl bg-white/80 text-[20px] gap-x-4 px-6 ">
+              {filteredData.map((el, index) => (
+                <p onClick={() => handleClickCity(el)} key={index}>
+                  {el}
+                </p>
+              ))}
+            </div>
+          ) : null}
         </div>
         <div className=" bg-slate-50 h-full w-1/2 flex justify-center items-center flex-col relative">
-        <img src="./oran.png" className="absolute  top-[-48px]  top-[177px] left-[300px] flex items-center"/>
+          <img
+            src="./oran.png"
+            className="absolute  top-[-48px]  top-[177px] left-[300px] flex items-center"
+          />
           <div className=" w-[400px] h-[800px] min-w-120 top-16 left-40 bg-white/75 px-[30px] py-[40px] z-20 rounded-xl shadow-lg gap-[30px] flex flex-col justify-center ">
             <div className="flex gap-[50px] items-center">
               <div>
@@ -119,7 +282,7 @@ function App() {
                   September 10, 2021
                 </p>
                 <h1 className="text-slate-950 font-extrabold  text-5xl">
-                 {selectedCity}
+                  {selectedCity}
                 </h1>
               </div>
               <svg
@@ -138,16 +301,16 @@ function App() {
                 />
               </svg>
             </div>
-            <img src="./icon.png" className="flex" />
+            <img src={getWeatherImage()} className="flex" />
             <div className="px-12">
               <div className="text-transparent bg-clip-text font-extrabold text-[110px] -mt-10 bg-gradient-to-b from-black to-white">
                 {dayTemp}
               </div>
-              <h6 className="font-extrabold mb-12 h-6 text-indigo-500">
-                Sunny
+              <h6 className="font-extrabold mb-12 h-6 text-violet-400">
+                {daytext}
               </h6>
-              <div className="flex items-center justify-between">
-                <img src="./Home.png" />
+              <div className="flex items-center justify-between ">
+                <img src="./Home.png"/>
                 <img src="./Pin.png" />
                 <img src="./Heart.png" />
                 <img src="./User.png" />
@@ -156,15 +319,15 @@ function App() {
           </div>
         </div>
         <div className=" h-full w-1/2 bg-slate-900  flex justify-center items-center">
-        <img src="dark.png" className="absolute top-[955px] right-[300px]"/>
-          <div className=" w-[400px] h-[800px] min-w-120 top-16 left-40 bg-[#111827]/75 px-[30px] py-[40px] z-20 rounded-xl shadow-lg gap-[30px] flex flex-col backdrop-blur-md mb-[-10]">
+          <img src="dark.png" className="absolute top-[955px] right-[300px]" />
+          <div className=" w-[400px] h-[800px] min-w-120 top-16 left-40 bg-[#111827]/75 px-[30px] py-[40px] z-20 rounded-xl shadow-lg gap-[30px] flex flex-col backdrop-blur-md mb-[-10] ">
             <div className="flex gap-[50px] items-center">
               <div>
                 <p className=" text-gray-500 font-medium ">
                   September 10, 2021
                 </p>
                 <h1 className="text-gray-50 font-extrabold  text-5xl">
-                {selectedCity}
+                  {selectedCity}
                 </h1>
               </div>
               <svg
@@ -183,17 +346,17 @@ function App() {
                 />
               </svg>
             </div>
-            <img src="./moon.png" className="flex" />
+            <img src={getWeatherNightImage()} className="flex" />
             <div className="px-12">
               <div className="text-transparent bg-clip-text font-extrabold text-[110px] -mt-10 bg-gradient-to-b from-black to-white">
                 {nightTemp}
               </div>
-              <h6 className="font-extrabold mb-12 h-6 text-cyan-500">Cold</h6>
+              <h6 className="font-extrabold mb-12 h-6 text-amber-400">{daytext}</h6>
               <div className="flex items-center justify-between">
-                <img src="./Home.png" />
-                <img src="./Pin.png" />
-                <img src="./Heart.png" />
-                <img src="./User.png" />
+                <img src="./darkhouse.png" />
+                <img src="./darkpin.png" />
+                <img src="./darkheart.png" />
+                <img src="./darkrename.png"/>
               </div>
             </div>
           </div>
