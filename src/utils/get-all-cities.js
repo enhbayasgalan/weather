@@ -3,7 +3,7 @@ export const getAllCities = (countries) => {
         country.cities.map((city) => `${city}, ${country.country}`)
     
     );
-console.log(countries);
+
 
     return citiesAndCountry;
 }

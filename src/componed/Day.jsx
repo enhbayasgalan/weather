@@ -1,5 +1,5 @@
 const Day = (props) => {
-    const {daytext, city, dayTemp, getWeatherImage} = props
+    const {daytext, getWeatherImage ,city, dayTemp } = props
     
 
     return(

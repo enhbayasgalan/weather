@@ -15,10 +15,9 @@ function App() {
   const [nightTemp, setNightTemp] = useState("");
   const [daytext, setDaytext] = useState("");
   const [nighttext, setnighttext] = useState("");
-  const [isCon, setIcon] = useState("");
   const [city, setCity] = useState("");
 
-  console.log(weatherData);
+
 
   
 
@@ -38,74 +37,12 @@ function App() {
       const selCity = result.location.name;
       setCity(selCity);
 
-      if (daytext === "sunny") {
-        setIcon("sun.png"); //sun
-      } else if (
-        daytext === "Partly Cloudly" ||
-        daytext === "Cloudy" ||
-        daytext === "Overcast" ||
-        daytext === "Fog" ||
-        daytext === "Freezing fog"
-      ) {
-        setIcon("sunClouds.png");
-      } else if (daytext === "Blowing snow" || daytext === "Blizzard") {
-        setIcon("sunWind.png");
-      } else if (
-        daytext === "Patchy rain possible" ||
-        daytext === "Patchy freezing drizzle possible" ||
-        daytext === "Patchy light drizzle" ||
-        daytext === "Light drizzle" ||
-        daytext === "Freezing drizzle" ||
-        daytext === "Heavy freezing drizzle" ||
-        daytext === "Patchy light rain" ||
-        daytext === "Light rain" ||
-        daytext === "Moderate rain at times" ||
-        daytext === "Moderate rain" ||
-        daytext === "Heavy rain at times" ||
-        daytext === "Heavy rain" ||
-        daytext === "Light freezing rain" ||
-        daytext === "Moderate or heavy freezing rain" ||
-        daytext === "Light rain shower" ||
-        daytext === "Moderate or heavy rain shower" ||
-        daytext === "Patchy rain nearby" ||
-        daytext === "Torrential rain shower"
-      ) {
-        setIcon("sunRain.png");
-      } else if (
-        daytext === "Patchy snow possible" ||
-        daytext === "Patchy sleet possible" ||
-        daytext === "Light sleet" ||
-        daytext === "Moderate or heavy sleet" ||
-        daytext === "Patchy light snow" ||
-        daytext === "Light snow" ||
-        daytext === "Patchy moderate snow" ||
-        daytext === "Moderate snow" ||
-        daytext === "Patchy heavy snow" ||
-        daytext === "Heavy snow" ||
-        daytext === "Ice pellets" ||
-        daytext === "Light sleet showers" ||
-        daytext === "Moderate or heavy sleet showers" ||
-        daytext === "Light snow showers" ||
-        daytext === "Moderate or heavy snow showers" ||
-        daytext === "Light showers og ice pellets" ||
-        daytext === "Moderate or heavy showers of ice pellets"
-      ) {
-        setIcon("snow.png");
-      } else if (
-        daytext === "Thundery outbreaks possible" ||
-        daytext === "Patchy light rain with thunder" ||
-        daytext === "Moderate or heavy rain with thunder" ||
-        daytext === "Patchy light snow with thunder" ||
-        daytext === "Moderate or heavy snow with thunder"
-      ) {
-        setIcon("Storm.png");
-      }
-
+  
       setDaytext(daytext);
       setnighttext(nighttext);
       setDaytemp(daytemp);
       setNightTemp(nighttemp);
-      console.log(result);
+
     } catch (error) {
       console.log(error);
     }
@@ -121,7 +58,7 @@ function App() {
     }
     // Үүлэн болон Бүрхүүлтэй туман
     else if (
-      conditionText.toLowerCase().includes("cloud") ||
+      conditionText.toLowerCase().includes("cloudy") ||
       conditionText.toLowerCase().includes("overcast") ||
       conditionText.toLowerCase().includes("fog")
     ) {
@@ -171,7 +108,7 @@ function App() {
     }
     // Бороо
     else if (nighttext.toLowerCase().includes("rain")) {
-      console.log(nighttext);
+
 
       return "nightrain.png"; // Бороо
     }
@@ -204,6 +141,7 @@ function App() {
 
   useEffect(() => {
     getWeatherData();
+   
   }, [selectedCity]);
   
 
@@ -232,6 +170,7 @@ function App() {
             city={city}
             nightTemp={nightTemp}
             getWeatherNightImage={getWeatherNightImage}
+
           />
         </div>
       </div>
@@ -240,5 +179,5 @@ function App() {
     </>
   );
 }
-console.log(countriesData);
+
 export default App;
