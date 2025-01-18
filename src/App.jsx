@@ -5,14 +5,15 @@ import { getAllCities } from "./utils/get-all-cities";
 function App() {
   const [searchValue, setSearchValue] = useState("");
   const [allCities, setAllCities] = useState([]);
-  const [selectedCity, setSelectedCity] = useState("Ulaanbaatar, mongloia");
+  const [selectedCity, setSelectedCity] = useState("Ulaanbaatar");
   const [filteredData, setFilteredData] = useState([]);
   const [weatherData, setWeatherData] = useState({});
   const [dayTemp, setDaytemp] = useState("");
   const [nightTemp, setNightTemp] = useState("");
   const [daytext, setDaytext] = useState("");
+  const [nighttext, setnighttext] = useState("");
   const [isCon, setIcon] = useState("");
-  const [city, setcity] = useState("");
+  
 
   console.log(weatherData);
 
@@ -46,7 +47,8 @@ function App() {
       setWeatherData(result);
       const daytemp = result.forecast.forecastday[0].hour[9].temp_c;
       const nighttemp = result.forecast.forecastday[0].hour[22].temp_c;
-      const daytext = result.forecast.forecastday[0].day.condition.text;
+      const daytext = result.forecast.forecastday[0].hour[9].condition.text;
+      const nighttext = result.forecast.forecastday[0].hour[22].condition.text;
        
       
       if (daytext === "sunny") {
@@ -114,6 +116,7 @@ function App() {
       }
 
       setDaytext(daytext);
+      setnighttext(nighttext);
       setDaytemp(daytemp);
       setNightTemp(nighttemp);
       console.log(result);
@@ -168,46 +171,47 @@ function App() {
    
 
   const getWeatherNightImage = () => {
-    const NightconditionText = weatherData?.forecast?.forecastday?.[0]?.day?.condition?.text || "";
   
     // Нарны зураг
-    if (NightconditionText.toLowerCase().includes("sunny")) {
+    if (nighttext.toLowerCase().includes("clear")) {
       return "moon.png";  // Нарны зураг
     } 
     // Үүлэн болон Бүрхүүлтэй туман
     else if (
-      NightconditionText.toLowerCase().includes("cloud") ||
-      NightconditionText.toLowerCase().includes("overcast") ||
-      NightconditionText.toLowerCase().includes("fog")
+      nighttext.toLowerCase().includes("cloud") ||
+      nighttext.toLowerCase().includes("overcast") ||
+      nighttext.toLowerCase().includes("fog")
     ) {
       return "NightClouds.png";  // Үүлтэй, бүрхүүлтэй туман
     } 
     // Бороо
-    else if (NightconditionText.toLowerCase().includes("rain")) {
-      return "NightRain.png";  // Бороо
+    else if (nighttext.toLowerCase().includes("rain")) {
+      console.log(nighttext);
+      
+      return "nightrain.png";  // Бороо
     } 
     // Цас, Салхи
     else if (
-      NightconditionText.toLowerCase().includes("snow") ||
-      NightconditionText.toLowerCase().includes("sleet") ||
-      NightconditionText.toLowerCase().includes("freezing")
+      nighttext.toLowerCase().includes("snow") ||
+      nighttext.toLowerCase().includes("sleet") ||
+      nighttext.toLowerCase().includes("freezing")
     ) {
       return "NightSnow.png";  // Цас
     } 
     // Тунадас
     else if (
-      NightconditionText.toLowerCase().includes("Storm") ||
-      NightconditionText.toLowerCase().includes("Storm")
+      nighttext.toLowerCase().includes("storm") ||
+      nighttext.toLowerCase().includes("storm")
     ) {
       return "NightStorm.png";  // Тунадас
     } 
     // Салхи
-    else if (NightconditionText.toLowerCase().includes("wind")) {
+    else if (nighttext.toLowerCase().includes("wind")) {
       return "NightWind.png";  // Салхи
     } 
     // Хэрэв ямар ч тохиролцоогүй бол
     else {
-      return "Default.png";  // Үндсэн зураг (есдүгээр зураг)
+      return "Default.png";  // Үндсэн зураг 
     }
   };
 
@@ -215,7 +219,7 @@ function App() {
    
 
   const handleClickCity = (city) => {
-    setSelectedCity(city).slice(1);
+    setSelectedCity(city);
   };
 
   const onChange = (event) => {
@@ -351,7 +355,7 @@ function App() {
               <div className="text-transparent bg-clip-text font-extrabold text-[110px] -mt-10 bg-gradient-to-b from-black to-white">
                 {nightTemp}
               </div>
-              <h6 className="font-extrabold mb-12 h-6 text-amber-400">{daytext}</h6>
+              <h6 className="font-extrabold mb-12 h-6 text-amber-400">{nighttext}</h6>
               <div className="flex items-center justify-between">
                 <img src="./darkhouse.png" />
                 <img src="./darkpin.png" />
