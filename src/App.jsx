@@ -37,7 +37,8 @@ function App() {
       const selCity = result.location.name;
       setCity(selCity);
 
-  
+      
+
       setDaytext(daytext);
       setnighttext(nighttext);
       setDaytemp(daytemp);
@@ -141,7 +142,7 @@ function App() {
 
   useEffect(() => {
     getWeatherData();
-   
+    getWeatherImage()
   }, [selectedCity]);
   
 
@@ -157,7 +158,7 @@ function App() {
             className="absolute  top-[-48px]  top-[177px] left-[300px] flex items-center"
           />
           <Day
-            daytext={daytext}
+            daytext={weatherData?.forecast?.forecastday?.[0]?.day?.condition?.text}
             city={city}
             dayTemp={dayTemp}
             getWeatherImage={getWeatherImage}
