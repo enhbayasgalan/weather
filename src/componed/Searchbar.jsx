@@ -27,6 +27,7 @@ const Searchbar = (props) => {
 
       const handleClickCity = (city) => {
         setSelectedCity(city);
+        setSearchValue("")
       };
     
       const onChange = (event) => {
